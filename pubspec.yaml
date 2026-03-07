@@ -1,0 +1,55 @@
+name: kids_learning_app
+description: A learning app for kids
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # نطق الكلمات (Text-to-Speech)
+  flutter_tts: ^3.8.5
+  
+  # تحويل الكلام لنص (Speech-to-Text) - 
+  speech_to_text: ^7.3.0
+  
+  # Notifications
+  flutter_local_notifications: ^16.3.3
+  timezone: ^0.9.4
+  
+  # Storage for level system
+  shared_preferences: ^2.5.4
+  
+  # الصوت - ترقية النسخة لتتوافق مع الميكروفون
+  audioplayers: ^6.1.0 
+  
+  # State management
+  provider: ^6.1.5
+
+  # API Connection (الربط مع Node.js لاحقاً)
+  http: ^1.2.0
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.2
+
+flutter:
+  uses-material-design: true
+
+  # All your assets stay here
+  assets:
+    - assets/images/
+    - assets/images/avatars/
+    - assets/images/categories/
+    - assets/images/alphabets/
+    - assets/audio/
+    - assets/fonts/
+
+  # Your fonts move here, under the SAME flutter heading
+  fonts:
+    - family: NotoSans
+      fonts:
+        - asset: assets/fonts/NotoSans-Regular.ttf
