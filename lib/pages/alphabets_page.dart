@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import '../services/api_service.dart'; // تأكد أن المسار صحيح لملف الـ API
 import '../services/notification_service.dart'; // تأكد أن المسار صحيح
 
@@ -18,6 +19,38 @@ class _AlphabetsPageState extends State<AlphabetsPage> {
   List<String> droppedCorrectItems = [];
   int score = 0;
   final AudioPlayer _audioPlayer = AudioPlayer();
+  final FlutterTts _tts = FlutterTts();
+
+  @override
+  void initState() {
+    super.initState();
+    _initTts();
+  }
+
+  Future<void> _initTts() async {
+    await _tts.setLanguage("en-US");
+    await _tts.setSpeechRate(0.42);
+    await _tts.setPitch(1.1);
+    // Announce the first letter when the game starts
+    await Future.delayed(const Duration(milliseconds: 600));
+    await _tts.speak("This is the letter ${currentLetter}");
+  }
+
+  Future<void> _speakLetter() async {
+    await _tts.speak("This is the letter ${currentLetter}. Find the pictures that start with ${currentLetter}!");
+  }
+
+  Future<void> _speakCorrect(String itemName) async {
+    await _tts.speak("${itemName} starts with ${currentLetter}. Correct!");
+  }
+
+  Future<void> _speakWrong(String itemName) async {
+    await _tts.speak("${itemName} does not start with ${currentLetter}. Try again!");
+  }
+
+  Future<void> _speakComplete() async {
+    await _tts.speak("Great job! You finished the letter ${currentLetter}!");
+  }
 
   // All letters A to Z
   final List<String> allLetters = [
@@ -303,7 +336,10 @@ class _AlphabetsPageState extends State<AlphabetsPage> {
 
   Widget _buildLetterDisplay() {
     return GestureDetector(
-      onTap: _playLetterSound,
+      onTap: () {
+        _playLetterSound();
+        _speakLetter(); // ← TTS reads the letter when tapped
+      },
       child: Container(
         width: 100,
         height: 100,
@@ -349,12 +385,15 @@ class _AlphabetsPageState extends State<AlphabetsPage> {
           await ApiService.addPoints(widget.userId, 10); 
 
           _playCorrectSound();
+          await _speakCorrect(item.name); // ← TTS confirms correct answer
 
           if (droppedCorrectItems.length == correctItemsCount) {
+            await _speakComplete(); // ← TTS celebrates
             _showCompletionDialog();
           }
         } else if (!item.isCorrect) {
           _playErrorSound();
+          await _speakWrong(item.name); // ← TTS explains the mistake
         }
       },
       builder: (context, candidateData, rejectedData) {
@@ -401,7 +440,10 @@ class _AlphabetsPageState extends State<AlphabetsPage> {
             child: _buildItemCard(item, isDragging: true)
           ),
           childWhenDragging: Opacity(opacity: 0.3, child: _buildItemCard(item)),
-          child: _buildItemCard(item),
+          child: GestureDetector(
+            onTap: () => _tts.speak(item.name), // ← tap = TTS says the item name
+            child: _buildItemCard(item),
+          ),
         );
       },
     );
@@ -475,6 +517,10 @@ class _AlphabetsPageState extends State<AlphabetsPage> {
       }
       droppedCorrectItems.clear();
     });
+    // Announce new letter with TTS
+    Future.delayed(const Duration(milliseconds: 400), () {
+      _tts.speak("Now let's learn the letter ${currentLetter}!");
+    });
   }
 
   void _showFinalCompletionDialog() {
@@ -504,6 +550,7 @@ class _AlphabetsPageState extends State<AlphabetsPage> {
   @override
   void dispose() {
     _audioPlayer.dispose();
+    _tts.stop();
     super.dispose();
   }
 }
