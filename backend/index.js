@@ -178,7 +178,7 @@ app.delete('/api/kids/:id', authenticateToken, async (req, res) => {
 
 // GET all exercises
 app.get('/api/exercises', authenticateToken, async (req, res) => {
-  if (req.user.role !== 'teacher' && req.user.role !== 'admin') return res.sendStatus(403);
+  if (req.user.role !== 'teacher') return res.sendStatus(403);
   try {
     const result = await pool.query('SELECT * FROM exercises ORDER BY id DESC');
     res.json(result.rows);
@@ -189,7 +189,7 @@ app.get('/api/exercises', authenticateToken, async (req, res) => {
 
 // POST a new exercise
 app.post('/api/exercises', authenticateToken, async (req, res) => {
-  if (req.user.role !== 'teacher' && req.user.role !== 'admin') return res.sendStatus(403);
+  if (req.user.role !== 'teacher') return res.sendStatus(403);
   const { title, description } = req.body;
   if (!title || !description) return res.status(400).json({ error: 'title and description are required' });
   try {
@@ -205,7 +205,7 @@ app.post('/api/exercises', authenticateToken, async (req, res) => {
 
 // DELETE an exercise
 app.delete('/api/exercises/:id', authenticateToken, async (req, res) => {
-  if (req.user.role !== 'teacher' && req.user.role !== 'admin') return res.sendStatus(403);
+  if (req.user.role !== 'teacher') return res.sendStatus(403);
   const { id } = req.params;
   try {
     await pool.query('DELETE FROM exercises WHERE id = $1', [id]);

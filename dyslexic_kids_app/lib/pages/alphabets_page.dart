@@ -478,7 +478,7 @@ class _AlphabetsPageState extends State<AlphabetsPage> {
   }
 
   void _playLetterSound() {
-    _audioPlayer.play(AssetSource('assets/audio/${currentLetter.toLowerCase()}.mp3'));
+    _audioPlayer.play(AssetSource('audio/${currentLetter.toLowerCase()}.mp3'));
   }
 
   void _playCorrectSound() => _audioPlayer.play(AssetSource(''));
