@@ -18,7 +18,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final _confirmPasswordController = TextEditingController();
   String _userType = 'kid';
   bool _isLoading = false;
-  String _savedToken = ''; // Store token here to pass it to the next page
+  String _savedToken = '';
 
   Future<int?> registerUser() async {
     if (_passwordController.text != _confirmPasswordController.text) {
@@ -46,7 +46,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
       if (response.statusCode == 201) {
         print("✅ Success: ${responseData['message']}");
 
-        // FIX: Extract token from the root of the response
         final String token = responseData['token'] ?? '';
         final int userId = responseData['user']['id'];
 
@@ -55,8 +54,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           await prefs.setString('token', token);
           await prefs.setInt('userId', userId);
 
-          setState(() =>
-              _savedToken = token); // Save to state to pass to next screen
+          setState(() => _savedToken = token);
           print("🎫 Token received: OK ✅");
         }
 
@@ -90,6 +88,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         child: SafeArea(
           child: Column(
             children: [
+              // Progress bar
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
@@ -101,32 +100,35 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             color: Colors.grey.shade700,
                             fontWeight: FontWeight.w600)),
                     const SizedBox(height: 10),
-                    Container(
-                      height: 8,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: [
-                          Colors.orange.shade300,
-                          Colors.pink.shade300
-                        ]),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                    Stack(
+                      children: [
+                        Container(
+                          height: 8,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        FractionallySizedBox(
+                          widthFactor: 1 / 2,
+                          child: Container(
+                            height: 8,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(colors: [
+                                Colors.orange.shade300,
+                                Colors.pink.shade300
+                              ]),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-              Text(
-                'create your\naccount',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 38,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.orange.shade500,
-                  height: 1.2,
-                  letterSpacing: 1.5,
-                ),
-              ),
-              const SizedBox(height: 20),
+              // Card
               Expanded(
                 child: Center(
                   child: ClipRRect(
@@ -134,7 +136,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                       child: Container(
-                        width: 400,
+                        width: 350,
+                        height: 650,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 25, vertical: 30),
                         decoration: BoxDecoration(
@@ -144,78 +147,97 @@ class _RegistrationPageState extends State<RegistrationPage> {
                               color: Colors.white.withOpacity(0.6), width: 1),
                         ),
                         child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              _buildTextField(_usernameController, 'username',
-                                  Icons.person_outline),
-                              const SizedBox(height: 20),
-                              _buildTextField(_passwordController, 'password',
-                                  Icons.lock_outline,
-                                  isPassword: true),
-                              const SizedBox(height: 20),
-                              _buildTextField(_confirmPasswordController,
-                                  'confirm password', Icons.lock_outline,
-                                  isPassword: true),
-                              const SizedBox(height: 30),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  _buildUserTypeButton('kid', 'Kid'),
-                                  const SizedBox(width: 30),
-                                  _buildUserTypeButton('teacher', 'Teacher'),
-                                ],
-                              ),
-                            ],
+                          child: SizedBox(
+                            height: 590,
+                            child: Column(
+                              children: [
+                                // ✅ Title now inside the card
+                                Text(
+                                  'create your\naccount',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 38,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.orange.shade500,
+                                    height: 1.2,
+                                    letterSpacing: 1.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 25),
+                                _buildTextField(_usernameController, 'username',
+                                    Icons.person_outline),
+                                const SizedBox(height: 20),
+                                _buildTextField(
+                                    _passwordController, 'password',
+                                    Icons.lock_outline,
+                                    isPassword: true),
+                                const SizedBox(height: 20),
+                                _buildTextField(_confirmPasswordController,
+                                    'confirm password', Icons.lock_outline,
+                                    isPassword: true),
+                                const SizedBox(height: 30),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    _buildUserTypeButton('kid', 'Kid'),
+                                  ],
+                                ),
+                                const Spacer(),
+                                // Button at the bottom of the card
+                                GestureDetector(
+                                  onTap: _isLoading
+                                      ? null
+                                      : () async {
+                                          int? userId = await registerUser();
+                                          if (userId != null && mounted) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AvatarSelectionPage(
+                                                  username:
+                                                      _usernameController.text,
+                                                  userId: userId,
+                                                  token: _savedToken,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 60,
+                                    decoration: BoxDecoration(
+                                      color: Colors.purple.shade300,
+                                      borderRadius: BorderRadius.circular(35),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.purple.shade300
+                                              .withOpacity(0.5),
+                                          offset: const Offset(0, 8),
+                                          blurRadius: 0,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Center(
+                                      child: _isLoading
+                                          ? const CircularProgressIndicator(
+                                              color: Colors.white)
+                                          : const Text(
+                                              'Create Account',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 30.0),
-                child: GestureDetector(
-                  onTap: _isLoading
-                      ? null
-                      : () async {
-                          int? userId = await registerUser();
-                          if (userId != null && mounted) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AvatarSelectionPage(
-                                  username: _usernameController.text,
-                                  userId: userId,
-                                  token:
-                                      _savedToken, // Pass the token we just saved
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                  child: Container(
-                    width: 200,
-                    height: 65,
-                    decoration: BoxDecoration(
-                      color: Colors.purple.shade300,
-                      borderRadius: BorderRadius.circular(35),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.purple.shade300.withOpacity(0.5),
-                          offset: const Offset(0, 8),
-                          blurRadius: 0,
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: _isLoading
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text('NEXT',
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white)),
                     ),
                   ),
                 ),

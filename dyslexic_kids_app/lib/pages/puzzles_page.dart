@@ -17,7 +17,7 @@ Future<void> _awardPuzzlePoints(int points, {required int userId}) async {
 }
 
 // ============================================================
-// PuzzleGamesPage → va directement au jeu Son Initial
+// PuzzleGamesPage
 // ============================================================
 class PuzzleGamesPage extends StatelessWidget {
   final int userId;
@@ -31,9 +31,6 @@ class PuzzleGamesPage extends StatelessWidget {
 
 // ============================================================
 // INITIAL SOUND GAME
-// Cible dyslexie : conscience phonologique (5-8 ans)
-// L'enfant voit une image et choisit la lettre du son initial
-// Ex: 🐱 → C   🍎 → A   🐬 → D
 // ============================================================
 class InitialSoundGame extends StatefulWidget {
   final int userId;
@@ -46,124 +43,160 @@ class _InitialSoundGameState extends State<InitialSoundGame>
     with SingleTickerProviderStateMixin {
   final FlutterTts _tts = FlutterTts();
 
-  // Questions : image emoji + mot + lettre correcte + 3 distracteurs
+  // ✅ Replaced all emojis with real image assets from assets/images/alphabets/
   final List<Map<String, dynamic>> _allQuestions = [
     {
-      'emoji': '🍎',
+      'image': 'assets/images/alphabets/apple.png',
       'word': 'Apple',
       'correct': 'A',
       'wrong': ['B', 'D', 'P']
     },
     {
-      'emoji': '🦋',
-      'word': 'Butterfly',
+      'image': 'assets/images/alphabets/banana.png',
+      'word': 'Banana',
       'correct': 'B',
       'wrong': ['D', 'P', 'Q']
     },
     {
-      'emoji': '🐱',
+      'image': 'assets/images/alphabets/cat.png',
       'word': 'Cat',
       'correct': 'C',
       'wrong': ['K', 'G', 'S']
     },
     {
-      'emoji': '🐬',
-      'word': 'Dolphin',
+      'image': 'assets/images/alphabets/dog.png',
+      'word': 'Dog',
       'correct': 'D',
       'wrong': ['B', 'P', 'T']
     },
     {
-      'emoji': '🐘',
+      'image': 'assets/images/alphabets/elephant.png',
       'word': 'Elephant',
       'correct': 'E',
       'wrong': ['A', 'I', 'O']
     },
     {
-      'emoji': '🐸',
+      'image': 'assets/images/alphabets/frog.png',
       'word': 'Frog',
       'correct': 'F',
       'wrong': ['V', 'B', 'P']
     },
     {
-      'emoji': '🦒',
-      'word': 'Giraffe',
+      'image': 'assets/images/alphabets/goat.png',
+      'word': 'Goat',
       'correct': 'G',
       'wrong': ['J', 'C', 'D']
     },
     {
-      'emoji': '🌺',
-      'word': 'Hibiscus',
+      'image': 'assets/images/alphabets/hat.png',
+      'word': 'Hat',
       'correct': 'H',
       'wrong': ['A', 'E', 'N']
     },
     {
-      'emoji': '🦁',
+      'image': 'assets/images/alphabets/igloo.png',
+      'word': 'Igloo',
+      'correct': 'I',
+      'wrong': ['E', 'O', 'U']
+    },
+    {
+      'image': 'assets/images/alphabets/jam.png',
+      'word': 'Jam',
+      'correct': 'J',
+      'wrong': ['G', 'Y', 'D']
+    },
+    {
+      'image': 'assets/images/alphabets/kite.png',
+      'word': 'Kite',
+      'correct': 'K',
+      'wrong': ['C', 'G', 'T']
+    },
+    {
+      'image': 'assets/images/alphabets/lion.png',
       'word': 'Lion',
       'correct': 'L',
       'wrong': ['R', 'N', 'M']
     },
     {
-      'emoji': '🌙',
+      'image': 'assets/images/alphabets/moon.png',
       'word': 'Moon',
       'correct': 'M',
       'wrong': ['N', 'W', 'B']
     },
     {
-      'emoji': '🎵',
-      'word': 'Note',
+      'image': 'assets/images/alphabets/nest.png',
+      'word': 'Nest',
       'correct': 'N',
       'wrong': ['M', 'U', 'H']
     },
     {
-      'emoji': '🐧',
-      'word': 'Penguin',
+      'image': 'assets/images/alphabets/orange.png',
+      'word': 'Orange',
+      'correct': 'O',
+      'wrong': ['A', 'U', 'E']
+    },
+    {
+      'image': 'assets/images/alphabets/pizza.png',
+      'word': 'Pizza',
       'correct': 'P',
       'wrong': ['B', 'D', 'Q']
     },
     {
-      'emoji': '👑',
+      'image': 'assets/images/alphabets/queen.png',
       'word': 'Queen',
       'correct': 'Q',
       'wrong': ['P', 'B', 'D']
     },
     {
-      'emoji': '🌈',
-      'word': 'Rainbow',
+      'image': 'assets/images/alphabets/rabbit.png',
+      'word': 'Rabbit',
       'correct': 'R',
       'wrong': ['L', 'N', 'W']
     },
     {
-      'emoji': '⭐',
+      'image': 'assets/images/alphabets/star.png',
       'word': 'Star',
       'correct': 'S',
       'wrong': ['C', 'Z', 'T']
     },
     {
-      'emoji': '🐯',
+      'image': 'assets/images/alphabets/tiger.png',
       'word': 'Tiger',
       'correct': 'T',
       'wrong': ['D', 'P', 'B']
     },
     {
-      'emoji': '☂️',
+      'image': 'assets/images/alphabets/umbrella.png',
       'word': 'Umbrella',
       'correct': 'U',
       'wrong': ['A', 'O', 'N']
     },
     {
-      'emoji': '🌋',
-      'word': 'Volcano',
+      'image': 'assets/images/alphabets/van.png',
+      'word': 'Van',
       'correct': 'V',
       'wrong': ['W', 'F', 'B']
     },
     {
-      'emoji': '🐺',
-      'word': 'Wolf',
+      'image': 'assets/images/alphabets/whale.png',
+      'word': 'Whale',
       'correct': 'W',
       'wrong': ['V', 'M', 'N']
     },
     {
-      'emoji': '🦓',
+      'image': 'assets/images/alphabets/xylophone.png',
+      'word': 'Xylophone',
+      'correct': 'X',
+      'wrong': ['Z', 'S', 'K']
+    },
+    {
+      'image': 'assets/images/alphabets/yak.png',
+      'word': 'Yak',
+      'correct': 'Y',
+      'wrong': ['J', 'W', 'G']
+    },
+    {
+      'image': 'assets/images/alphabets/zebra.png',
       'word': 'Zebra',
       'correct': 'Z',
       'wrong': ['S', 'X', 'C']
@@ -282,7 +315,6 @@ class _InitialSoundGameState extends State<InitialSoundGame>
                   onPressed: () => Navigator.pop(context)),
             ),
             const Spacer(),
-            // Score badge
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
@@ -338,7 +370,13 @@ class _InitialSoundGameState extends State<InitialSoundGame>
               ],
             ),
             child: Column(children: [
-              Text(q['emoji'], style: const TextStyle(fontSize: 90)),
+              // ✅ Real image instead of emoji
+              Image.asset(
+                q['image'],
+                width: 120,
+                height: 120,
+                fit: BoxFit.contain,
+              ),
               const SizedBox(height: 14),
               const Text('Which letter does this word start with?',
                   style: TextStyle(fontSize: 16, color: Colors.grey),
@@ -448,18 +486,18 @@ class _InitialSoundGameState extends State<InitialSoundGame>
                 _score >= 8
                     ? 'Excellent !'
                     : _score >= 5
-                        ? 'good job!'
-                        : 'Continue !',
+                        ? 'Good Job!'
+                        : 'Keep Going!',
                 style: const TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
                     color: Color(0xFF4F46E5)),
               ),
               const SizedBox(height: 12),
-              Text('$_score / ${_questions.length} bonnes réponses',
+              Text('$_score / ${_questions.length} correct answers',
                   style: TextStyle(fontSize: 20, color: Colors.grey.shade600)),
               const SizedBox(height: 8),
-              Text('⭐ +$_totalPoints points gagnés !',
+              Text('⭐ +$_totalPoints points earned!',
                   style: TextStyle(
                       fontSize: 18,
                       color: Colors.amber.shade700,
@@ -471,7 +509,8 @@ class _InitialSoundGameState extends State<InitialSoundGame>
                     setState(() => _initGame());
                   },
                   icon: const Icon(Icons.refresh),
-                  label: const Text('Rejouer', style: TextStyle(fontSize: 16)),
+                  label:
+                      const Text('Play Again', style: TextStyle(fontSize: 16)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     foregroundColor: Colors.white,
@@ -485,7 +524,7 @@ class _InitialSoundGameState extends State<InitialSoundGame>
                 ElevatedButton.icon(
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(Icons.home),
-                  label: const Text('Accueil', style: TextStyle(fontSize: 16)),
+                  label: const Text('Home', style: TextStyle(fontSize: 16)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey.shade400,
                     foregroundColor: Colors.white,

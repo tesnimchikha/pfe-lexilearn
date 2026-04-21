@@ -111,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(
                   width: 350,
-                  height: 500,
+                  height: 650,
                   padding: const EdgeInsets.all(30),
                   decoration: BoxDecoration(
                     color: const Color.fromRGBO(255, 255, 255, 0.7),
